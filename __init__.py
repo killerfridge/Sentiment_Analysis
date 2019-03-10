@@ -3,6 +3,7 @@
 # Binary classifier
 
 import nltk
+from nltk.stem import PorterStemmer
 import random
 from nltk.corpus import movie_reviews, stopwords
 from sklearn.model_selection import train_test_split
@@ -11,8 +12,8 @@ import pandas as pd
 import numpy as np
 
 stopwords = set(stopwords.words('english'))
-punctuation = '.\'\"-,;:?'
-
+punctuation = '.\'\"-,;:?!_--[]()'
+ps = PorterStemmer()
 
 documents = []
 
@@ -21,7 +22,7 @@ for category in movie_reviews.categories():
         word_list = []
         for word in list(movie_reviews.words(fileid)):
             if word not in stopwords and word not in punctuation:
-                word_list.append(word)
+                word_list.append(ps.stem(word))
         documents.append((np.array(word_list), category))
 
 all_words = []
@@ -35,6 +36,7 @@ word_features = list(all_words.keys())[:3000]
 train_set, test_set = train_test_split(documents)
 
 print(train_set[:10])
+
 
 def find_features(document):
     words = set(document)
